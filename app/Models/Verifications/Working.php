@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models\Verifications;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Orchid\Screen\AsSource;
+
+class Working extends Model
+{
+    use HasFactory, AsSource;
+    
+    protected $table = 'v_working';
+
+    protected $fillable = [
+        'status_id',
+        'inv_no',
+        'vendor_id',
+        'serial_start',
+        'serial_end',
+        'serial_start_int',
+        'serial_end_int',
+        'quantity',
+        'date_import',
+        'sut_id',
+        'request_id',
+        'poverki_id'
+    ];
+}

@@ -25,7 +25,6 @@ return new class extends Migration
 
             $table->string('number', 10)->nullable()
                 ->default(null)
-                ->unique()
                 ->comment('Регистрационный номер');
             
             $table->date('date_from')->nullable()
