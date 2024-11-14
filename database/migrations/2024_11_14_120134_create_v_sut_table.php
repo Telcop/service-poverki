@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id()->primary();
 
             $table->unsignedBigInteger('vendor_id')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index();
             $table->foreign('vendor_id')
                 ->references('id')
@@ -24,16 +24,16 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             $table->string('number', 10)->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Регистрационный номер');
             
             $table->date('date_from')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Дата действия СУТа от');
 
             $table->date('date_to')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Дата действия СУТа до');
 

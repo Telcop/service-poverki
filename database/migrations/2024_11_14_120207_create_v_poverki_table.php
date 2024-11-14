@@ -15,26 +15,26 @@ return new class extends Migration
             $table->id()->primary();
             
             $table->string('number', 10)->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Номер поверки');
         
             $table->date('date')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Дата поверки');
 
             $table->string('name', 512)->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Название поверки для пользователя');
 
             $table->string('url', 256)->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('URI файла поверки в хранилище');
 
             $table->date('date_publication')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Дата публикации поверки на сайте');
 

@@ -19,7 +19,7 @@ return new class extends Migration
                 ->comment('Модель');
 
             $table->string('vendore_name', 512)->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Название СУТ');
 
             $table->timestamps();

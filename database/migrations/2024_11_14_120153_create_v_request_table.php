@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id()->primary();
 
             $table->date('date_from')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Дата заявки');
             
             $table->unsignedInteger('number')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Номер заявки');
 

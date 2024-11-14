@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedSmallInteger('status_id')->nullable()
-                ->deafult(null);
+                ->default(null);
             $table->foreign('status_id')
                 ->references('id')
                 ->on('v_status')
@@ -23,12 +23,12 @@ return new class extends Migration
                 ->restrictOnDelete();
             
             $table->unsignedBigInteger('inv_no')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Номер инвойса');
 
             $table->unsignedBigInteger('vendor_id')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index();
             $table->foreign('vendor_id')
                 ->references('id')
@@ -37,30 +37,30 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             $table->string('serial_start', 16)->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Начало серии');
             $table->string('serial_end', 16)->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Конец серии');
             $table->unsignedInteger('serial_start_int')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Начало серии числовой');
             $table->unsignedInteger('serial_end_int')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Конец серии числовой');
             $table->index(['serial_start_int', 'serial_end_int']);
 
             $table->unsignedInteger('quantity')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Количество'); 
 
             $table->date('date_import')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index()
                 ->comment('Дата ввоза на территорию РФ');
 
             $table->unsignedBigInteger('sut_id')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index();
             $table->foreign('sut_id')
                 ->references('id')
@@ -69,7 +69,7 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             $table->unsignedBigInteger('request_id')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index();
             $table->foreign('request_id')
                 ->references('id')
@@ -78,7 +78,7 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             $table->unsignedBigInteger('poverki_id')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->index();
             $table->foreign('poverki_id')
                 ->references('id')

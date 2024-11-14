@@ -15,13 +15,13 @@ return new class extends Migration
             $table->smallIncrements('id');
 
             $table->string('name',  30)->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Статус');
             $table->string('tab', 120)->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Название вкладки');
             $table->unsignedSmallInteger('weight')->nullable()
-                ->deafult(null)
+                ->default(null)
                 ->comment('Весовой коэффициент');
 
             $table->timestamps();
