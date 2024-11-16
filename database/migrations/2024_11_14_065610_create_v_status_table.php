@@ -14,12 +14,15 @@ return new class extends Migration
         Schema::create('v_status', function (Blueprint $table) {
             $table->smallIncrements('id');
 
-            $table->string('name',  30)->nullable()
+            $table->string('status',  30)->nullable()
                 ->default(null)
                 ->comment('Статус');
-            $table->string('tab', 120)->nullable()
+            $table->string('name', 120)->nullable()
                 ->default(null)
                 ->comment('Название вкладки');
+            $table->string('description', 512)->nullable()
+                ->default(null)
+                ->comment('Описание вкладки');
             $table->unsignedSmallInteger('weight')->nullable()
                 ->default(null)
                 ->comment('Весовой коэффициент');

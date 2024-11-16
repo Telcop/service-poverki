@@ -14,8 +14,9 @@ class Status extends Model
     protected $table = 'v_status';
 
     protected $fillable = [
+        'status',
         'name',
-        'tab',
+        'description',
         'weight'
     ];
 
