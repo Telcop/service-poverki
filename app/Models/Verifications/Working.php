@@ -4,6 +4,7 @@ namespace App\Models\Verifications;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Orchid\Screen\AsSource;
 
 class Working extends Model
@@ -26,4 +27,29 @@ class Working extends Model
         'request_id',
         'poverki_id'
     ];
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function vendor(): BelongsTo
+    {
+        return $this->belongsTo(Vendor::class);
+    }
+
+    public function sut(): BelongsTo
+    {
+        return $this->belongsTo(Vendor::class);
+    }
+
+    public function request(): BelongsTo
+    {
+        return $this->belongsTo(Vendor::class);
+    }
+
+    public function poverki(): BelongsTo
+    {
+        return $this->belongsTo(Vendor::class);
+    }
 }
