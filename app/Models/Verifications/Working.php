@@ -40,16 +40,16 @@ class Working extends Model
 
     public function sut(): BelongsTo
     {
-        return $this->belongsTo(Vendor::class);
+        return $this->belongsTo(Sut::class);
     }
 
     public function request(): BelongsTo
     {
-        return $this->belongsTo(Vendor::class);
+        return $this->belongsTo(Request::class);
     }
 
     public function poverki(): BelongsTo
     {
-        return $this->belongsTo(Vendor::class);
+        return $this->belongsTo(Poverki::class);
     }
 }
