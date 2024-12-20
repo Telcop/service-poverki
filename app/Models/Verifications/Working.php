@@ -4,12 +4,18 @@ namespace App\Models\Verifications;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Crypt;
 use Orchid\Screen\AsSource;
+use Orchid\Filters\Filterable;
+use Illuminate\Support\Facades\Log;
+use Orchid\Attachment\Attachable;
 
 class Working extends Model
 {
-    use HasFactory, AsSource;
+    use SoftDeletes, HasFactory, AsSource, Filterable, Attachable;
     
     protected $table = 'v_working';
 
@@ -22,11 +28,35 @@ class Working extends Model
         'serial_start_int',
         'serial_end_int',
         'quantity',
+        'etd',
         'date_import',
         'sut_id',
         'request_id',
-        'poverki_id'
+        'number_poverki',
+        'date_poverki',
+        'name_poverki',
+        'url_poverki',
+        'date_publication',
+        'verification_id'
     ];
+
+    protected $allowedSorts = [
+        'id',
+        'inv_no',
+        'date_import',
+        'number_poverki',
+        'date_poverki',
+        'date_publication',
+        'created_at',
+        'updated_at',
+    ];
+
+    protected $casts = [
+        'date_import' => 'date',
+        'date_poverki' => 'date',
+        'date_publication' => 'date',
+    ];
+
 
     public function status(): BelongsTo
     {
@@ -48,8 +78,12 @@ class Working extends Model
         return $this->belongsTo(Request::class);
     }
 
-    public function poverki(): BelongsTo
+    public function scopeActive(Builder $query): Builder 
     {
-        return $this->belongsTo(Poverki::class);
+        Log::info('Working model scopeActive method');
+        $data = unserialize(Crypt::decryptString(request()->post('scope')));
+        Log::info('scopeActive data:' . $data);
+
+        return $query; 
     }
 }

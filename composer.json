@@ -8,6 +8,8 @@
         "php": "^8.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "league/flysystem-ftp": "^3.29",
+        "league/flysystem-sftp-v3": "^3.29",
         "orchid/platform": "^14.43"
     },
     "require-dev": {

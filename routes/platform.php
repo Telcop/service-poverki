@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+use App\Orchid\Screens\Verifications\VerificationIndexScreen;
+use App\Orchid\Screens\Verifications\VerificationPreparedScreen;
+use App\Orchid\Screens\Verifications\VerificationRequestScreen;
+use App\Orchid\Screens\Verifications\VerificationPoverkiScreen;
+use App\Orchid\Screens\Verifications\VerificationUploadedScreen;
+use App\Orchid\Screens\Reports\ReestrScreen;
+use App\Orchid\Screens\References\VendorsScreen;
+use App\Orchid\Screens\References\SutScreen;
+
 use App\Orchid\Screens\Examples\ExampleActionsScreen;
 use App\Orchid\Screens\Examples\ExampleCardsScreen;
 use App\Orchid\Screens\Examples\ExampleChartsScreen;
@@ -102,3 +111,48 @@ Route::screen('/examples/charts', ExampleChartsScreen::class)->name('platform.ex
 Route::screen('/examples/cards', ExampleCardsScreen::class)->name('platform.example.cards');
 
 //Route::screen('idea', Idea::class, 'platform.screens.idea');
+
+Route::screen('verification/index', VerificationIndexScreen::class)
+    ->name('platform.verification.page100')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push('Внесение доставок', route('platform.verification.page100')));
+
+Route::screen('verification/prepared', VerificationPreparedScreen::class)
+    ->name('platform.verification.page200')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.verification.page100')
+        ->push('Подготовка заявки', route('platform.verification.page200')));
+
+Route::screen('verification/request', VerificationRequestScreen::class)
+    ->name('platform.verification.page300')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.verification.page200')
+        ->push('Заявки', route('platform.verification.page300')));
+
+Route::screen('verification/poverki', VerificationPoverkiScreen::class)
+    ->name('platform.verification.page400')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.verification.page300')
+        ->push('Поверки', route('platform.verification.page400')));
+
+Route::screen('verification/uploaded', VerificationUploadedScreen::class)
+    ->name('platform.verification.page500')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.verification.page400')
+        ->push('Выгруженные на сайт', route('platform.verification.page500')));
+
+Route::screen('reports/reestr', ReestrScreen::class)
+    ->name('platform.reports.reestr');
+
+Route::screen('references/vendors', VendorsScreen::class)
+    ->name('platform.references.vendors')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push('Справочник моделей', route('platform.references.vendors')));
+
+Route::screen('references/sut', SutScreen::class)
+    ->name('platform.references.sut')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push('Справочник СУТ', route('platform.references.sut')));

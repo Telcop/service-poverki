@@ -37,12 +37,47 @@ return [
             'throw' => false,
         ],
 
+        'import' => [
+            'driver' => 'local',
+            'root' => storage_path('app/import'),
+            'serve' => true,
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,
+        ],
+
+        'ftp_poverki' => [
+            'driver' => 'ftp',
+            'host' => env('FTP_HOST'),
+            'username' => env('FTP_USERNAME'),
+            'password' => env('FTP_PASSWORD'),
+        
+            // Optional FTP Settings...
+            'port' => env('FTP_PORT', 21),
+            'root' => env('FTP_ROOT_POVERKI'),
+            'passive' => true,
+            // 'ssl' => true,
+            // 'timeout' => 30,
+        ],
+
+        'ftp_requests' => [
+            'driver' => 'ftp',
+            'host' => env('FTP_HOST'),
+            'username' => env('FTP_USERNAME'),
+            'password' => env('FTP_PASSWORD'),
+        
+            // Optional FTP Settings...
+            'port' => env('FTP_PORT', 21),
+            'root' => env('FTP_ROOT_REQUESTS'),
+            'passive' => true,
+            // 'ssl' => true,
+            // 'timeout' => 30,
         ],
 
         's3' => [

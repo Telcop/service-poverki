@@ -39,6 +39,7 @@ return new class extends Migration
                 ->comment('Дата публикации поверки на сайте');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

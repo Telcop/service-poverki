@@ -99,7 +99,7 @@ return [
      |
      */
 
-    'index' => 'platform.main',
+    'index' => 'platform.reports.reestr',
 
     /*
      |--------------------------------------------------------------------------
@@ -160,8 +160,8 @@ return [
      */
 
     'template' => [
-        'header' => '',
-        'footer' => '',
+        'header' => 'brand.header',
+        'footer' => 'brand.footer',
     ],
 
     /*
