@@ -9,6 +9,7 @@ use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\TD;
 use Orchid\Screen\Fields\DateTimer;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationPreparedCommandBarRows extends Rows
 {
@@ -29,12 +30,12 @@ class VerificationPreparedCommandBarRows extends Rows
         return [
             Group::make([
                     ModalToggle::make('Восстановление')
-                        ->modal('ResoreModal')
+                        ->modal('RestoreModal')
                         ->method('restoreItem')
                         ->align(TD::ALIGN_LEFT)
                         ->class('btn icon-link btn-secondary rounded')
                         // ->disabled(true)
-                        ->canSee(true),
+                        ->canSee(Auth::user()->hasAccess('platform.admin.logging')),
 
                     DateTimer::make('dateRequest')
                         ->title('Дата заявки:')

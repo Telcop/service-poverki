@@ -19,6 +19,7 @@ use App\Orchid\Layouts\Verifications\VerificationTabMenu;
 use App\Orchid\Layouts\Verifications\VerificationPreparedCommandBarRows;
 use App\Orchid\Layouts\Verifications\VarificationPreparedTable;
 use App\Orchid\Layouts\Verifications\CreateOrUpdatePreparedModalRows;
+use App\Orchid\Selections\VerificationPreparedOperatorSelection;
 use Exception;
 
 class VerificationPreparedScreen extends Screen
@@ -39,7 +40,10 @@ class VerificationPreparedScreen extends Screen
     {
         $dashboard->registerResource('scripts', '/js/custom.js');
         $this->tab = Status::orderBy('weight', 'asc')->offset(self::TAB_NUMBER - 1)->limit(1)->get()->first();
-        $this->table = Working::where('status_id', $this->tab->id)->with('vendor')->with('sut')->filters()->paginate($this->paginate); //->orderBy('id', 'desc')->get()
+        $this->table = Working::where('status_id', $this->tab->id)->with('vendor')->with('sut')
+            ->filtersApplySelection(VerificationPreparedOperatorSelection::class)
+            ->filters()
+            ->paginate($this->paginate); //->orderBy('id', 'desc')->get()
 
         return [
             'tab' => $this->tab,
@@ -92,6 +96,7 @@ class VerificationPreparedScreen extends Screen
         return [
             VerificationTabMenu::class,
             VerificationPreparedCommandBarRows::class,
+            VerificationPreparedOperatorSelection::class,
             VarificationPreparedTable::class,
 
             // ============================================= МОДАЛЬНЫЕ ОКНА ============================================
@@ -102,7 +107,7 @@ class VerificationPreparedScreen extends Screen
                 ->async('asyncUpdateItem'),
                         
             // Модальное окно восстановление удаленной записи
-            Layout::modal('ResoreModal', Layout::rows([
+            Layout::modal('RestoreModal', Layout::rows([
                 Input::make('id', 'id')
                     ->mask('9{1,10}')
             ]))

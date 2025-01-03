@@ -21,6 +21,7 @@ use App\Orchid\Layouts\Verifications\VarificationPoverkiTable;
 use App\Orchid\Layouts\Verifications\EditVerificationPoverkiModalRows;
 use Exception;
 use Illuminate\Support\Carbon;
+use App\Orchid\Selections\VerificationPoverkiOperatorSelection;
 
 class VerificationPoverkiScreen extends Screen
 {
@@ -43,6 +44,7 @@ class VerificationPoverkiScreen extends Screen
             ->with('vendor')
             ->with('sut')
             ->with('request')
+            ->filtersApplySelection(VerificationPoverkiOperatorSelection::class)
             ->filters()->paginate($this->paginate); //->orderBy('id', 'desc')->get()
 
         return [
@@ -97,6 +99,7 @@ class VerificationPoverkiScreen extends Screen
         return [
             VerificationTabMenu::class,
             VerificationPoverkiCommandBarRows::class,
+            VerificationPoverkiOperatorSelection::class,
             VarificationPoverkiTable::class,
 
             // ============================================= МОДАЛЬНЫЕ ОКНА ============================================
@@ -109,7 +112,7 @@ class VerificationPoverkiScreen extends Screen
                 ->size(Modal::SIZE_LG), //XL
                                         
             // Модальное окно восстановление удаленной записи
-            Layout::modal('ResoreModal', Layout::rows([
+            Layout::modal('RestoreModal', Layout::rows([
                 Input::make('id', 'id')
                     ->mask('9{1,10}')
             ]))

@@ -19,6 +19,7 @@ use App\Orchid\Layouts\Verifications\VarificationIndexTable;
 use App\Orchid\Layouts\Verifications\CreateOrUpdateIndexModalRows;
 use App\Orchid\Layouts\Verifications\ImportInvoicesIndexModalRows;
 use Illuminate\Support\Carbon;
+use App\Orchid\Selections\VerificationIndexOperatorSelection;
 
 class VerificationIndexScreen extends Screen
 {
@@ -37,7 +38,10 @@ class VerificationIndexScreen extends Screen
     {
         $dashboard->registerResource('scripts', '/js/custom.js');
         $this->tab = Status::orderBy('weight', 'asc')->offset(self::TAB_NUMBER - 1)->limit(1)->get()->first();
-        $this->table = Working::where('status_id', $this->tab->id)->with('vendor')->filters()->paginate($this->paginate); 
+        $this->table = Working::where('status_id', $this->tab->id)->with('vendor')
+            ->filtersApplySelection(VerificationIndexOperatorSelection::class)
+            ->filters()
+            ->paginate($this->paginate); 
 
         return [
             'tab' => $this->tab,
@@ -90,6 +94,7 @@ class VerificationIndexScreen extends Screen
         return [
             VerificationTabMenu::class,
             VerificationIndexCommandBarRows::class,
+            VerificationIndexOperatorSelection::class,
             VarificationIndexTable::class,
 
             // ============================================= МОДАЛЬНЫЕ ОКНА ============================================
@@ -104,7 +109,7 @@ class VerificationIndexScreen extends Screen
                 ->async('asyncUpdateItem'),
                         
             // Модальное окно восстановление удаленной записи
-            Layout::modal('ResoreModal', Layout::rows([
+            Layout::modal('RestoreModal', Layout::rows([
                 Input::make('id', 'id')
                     ->mask('9{1,10}')
             ]))

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Orchid\Layouts\Verifications;
+namespace App\Orchid\Layouts\References;
 
 use Orchid\Screen\Field;
 use Orchid\Screen\Layouts\Rows;
@@ -8,9 +8,9 @@ use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\TD;
-use Illuminate\Support\Facades\Auth;
+use Orchid\Screen\Fields\DateTimer;
 
-class VerificationUploadedCommandBarRows extends Rows
+class ReferenceSutCommandBarRows extends Rows
 {
     /**
      * Used to create the title of a group of form elements.
@@ -28,21 +28,23 @@ class VerificationUploadedCommandBarRows extends Rows
     {
         return [
             Group::make([
-                    Button::make(__('Deactivate verifications'))
-                        ->method('deactivateVerifications')
-                        ->class('btn icon-link btn-secondary rounded')
-                        ->icon('bs.clipboard-check')
+                    ModalToggle::make('Создать СУТ')
+                        ->modal('CreateItemModal')
+                        ->method('createItem')
+                        ->modalTitle('Создать СУТ')
                         ->align(TD::ALIGN_LEFT)
-                        ->disabled($this->query->has('disable_entering'))
-                        ->id('date-button'),
+                        ->class('btn icon-link btn-secondary rounded')
+                        ->icon('bs.plus-circle'),
 
                     ModalToggle::make('Восстановление')
                         ->modal('RestoreModal')
                         ->method('restoreItem')
+                        ->align(TD::ALIGN_LEFT)
                         ->class('btn icon-link btn-secondary rounded')
-                        ->canSee(Auth::user()->hasAccess('platform.admin.logging')),
+                        // ->disabled(true)
+                        ->canSee(true),
             ])
-            ->widthColumns('19% 13%')
+            ->widthColumns('12% 15%')
             ->alignEnd(),
         ];
     }

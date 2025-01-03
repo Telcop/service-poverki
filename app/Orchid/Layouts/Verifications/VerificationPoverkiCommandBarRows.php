@@ -8,6 +8,7 @@ use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\TD;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationPoverkiCommandBarRows extends Rows
 {
@@ -36,10 +37,10 @@ class VerificationPoverkiCommandBarRows extends Rows
                         ->id('date-button'),
 
                     ModalToggle::make('Восстановление')
-                        ->modal('ResoreModal')
+                        ->modal('RestoreModal')
                         ->method('restoreItem')
                         ->class('btn icon-link btn-secondary rounded')
-                        ->canSee(true),
+                        ->canSee(Auth::user()->hasAccess('platform.admin.logging')),
             ])
             ->widthColumns('19% 13%')
             ->alignEnd(),

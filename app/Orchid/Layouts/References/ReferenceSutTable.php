@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Orchid\Layouts\Verifications;
+namespace App\Orchid\Layouts\References;
 
 use Orchid\Screen\Layouts\Table;
 use Orchid\Screen\TD;
+use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Actions\DropDown;
-use App\Models\Verifications\Working;
+use Orchid\Screen\Fields\Relation;
+use App\Models\Verifications\Vendor as ModelVendor;
+use App\Models\Verifications\Sut;
 
-class VarificationIndexTable extends Table
+
+class ReferenceSutTable extends Table
 {
     /**
      * Data source.
@@ -20,7 +24,7 @@ class VarificationIndexTable extends Table
      *
      * @var string
      */
-    protected $target = 'table1';
+    protected $target = 'sut';
 
     /**
      * @return bool
@@ -72,46 +76,51 @@ class VarificationIndexTable extends Table
     protected function columns(): iterable
     {
         return [
-            TD::make()
-            ->render(function (Working $working){
-                return CheckBox::make('working[]')
-                    ->value($working->id)
-                    ->checked(false)
-                    ->id("checkbox-{$working->id}");
-            })
-            ->cantHide()
-            ->align(TD::ALIGN_LEFT)
-            ->width('50'),
-
             TD::make('id', 'ID')
                 ->sort()
+                // ->filter(TD::FILTER_NUMERIC)
                 ->align(TD::ALIGN_LEFT)
                 ->width('50'),
 
-            TD::make('inv_no', '№ инвойса')
-                ->sort()
-                // ->filter(TD::FILTER_TEXT)
-                ->cantHide()
-                ->width('120'),
+            // TD::make('vendor.vendore_code', 'Модель')
+            //     ->sort()
+            //     ->filter(TD::FILTER_TEXT)
+            //     ->cantHide()
+            //     ->width('100'),
 
             TD::make('vendor.vendore_code', 'Модель')
                 // ->sort()
+                // ->filter(Relation::make('vendor.vendor_id')
+                //     ->fromModel(ModelVendor::class, 'vendore_code')
+                // )
+                // ->render(fn($model) => $model->vendor->venfore_code)
                 ->cantHide()
                 ->width('100'),
 
-            TD::make('vendor.vendore_name', 'Название')
-                ->defaultHidden(),
+            TD::make('vendor.vendore_name', 'Наименование')
+                ->defaultHidden()
+                ->width('300'),
 
-            TD::make('serial_start', 'Начало серии')
+            TD::make('number', 'Рег.№ СУТ')
+                ->sort()
+                ->cantHide()
+                ->width('100'),
+
+            TD::make('date_from', 'Дата действия СУТ от')
+                ->sort()
+                ->render(function ($model) {
+                    return $model->date_from->format('d.m.Y');
+                })
                 ->cantHide()
                 ->width('130'),
 
-            TD::make('serial_end', 'Конец серии')
+            TD::make('date_to', 'Дата действия СУТ до')
+                ->sort()
+                ->render(function ($model) {
+                    return $model->date_to->format('d.m.Y');
+                })
                 ->cantHide()
                 ->width('130'),
-
-            TD::make('quantity', 'Кол-во')
-                ->width('90'),
 
             TD::make('created_at', 'Дата создания')
                 ->sort()
@@ -119,8 +128,8 @@ class VarificationIndexTable extends Table
                     return $model->created_at->format('d.m.Y H:i');
                 })
                 ->width('150')
-                ->align(TD::ALIGN_RIGHT)
-                ->defaultHidden(),
+                ->defaultHidden()
+                ->align(TD::ALIGN_RIGHT),
 
             TD::make('updated_at', 'Дата обновления')
                 ->sort()
@@ -128,24 +137,25 @@ class VarificationIndexTable extends Table
                     return $model->updated_at->format('d.m.Y H:i');
                 })
                 ->width('160')
+                ->defaultHidden()
                 ->align(TD::ALIGN_RIGHT),
 
             // DropDown: кнопки редактирования и удаления
             TD::make(__('Actions'))
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')
-                ->render(fn(Working $working) =>
+                ->render(fn(Sut $item) =>
                     DropDown::make()
                         ->icon('bs.three-dots-vertical')
                         ->list([
                             ModalToggle::make(__('Edit'))
                                 ->modal('UpdateItemModal')
                                 ->method('updateItem')
-                                ->modalTitle('Редактирование ID = ' . $working->id)
-                                ->asyncParameters(['id' => $working->id])
+                                ->modalTitle('Редактирование ID = ' . $item->id)
+                                ->asyncParameters(['id' => $item->id])
                                 ->icon('bs.pencil'),
                             Button::make(__('Delete'))
-                                ->method('deleteItem', ['id' => $working->id])
+                                ->method('deleteItem', ['id' => $item->id])
                                 ->icon('bs.trash3')
                                 ->confirm('После удаления Вы потеряете эту запись')
                         ]))

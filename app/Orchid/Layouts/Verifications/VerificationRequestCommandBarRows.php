@@ -27,7 +27,7 @@ class VerificationRequestCommandBarRows extends Rows
         return [
             Group::make([
                     ModalToggle::make('Восстановление')
-                        ->modal('ResoreModal')
+                        ->modal('RestoreModal')
                         ->method('restoreItem')
                         ->align(TD::ALIGN_LEFT)
                         ->class('btn icon-link btn-secondary rounded')

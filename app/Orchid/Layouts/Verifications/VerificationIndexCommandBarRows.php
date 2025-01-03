@@ -9,6 +9,7 @@ use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\TD;
 use Orchid\Screen\Fields\DateTimer;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationIndexCommandBarRows extends Rows
 {
@@ -45,12 +46,12 @@ class VerificationIndexCommandBarRows extends Rows
                         ->icon('bs.plus-circle'),
 
                     ModalToggle::make('Восстановление')
-                        ->modal('ResoreModal')
+                        ->modal('RestoreModal')
                         ->method('restoreItem')
                         ->align(TD::ALIGN_LEFT)
                         ->class('btn icon-link btn-secondary rounded')
                         // ->disabled(true)
-                        ->canSee(true),
+                        ->canSee(Auth::user()->hasAccess('platform.admin.logging')),
 
                     DateTimer::make('dateEntering')
                         ->title('Дата ввоза в РФ:')

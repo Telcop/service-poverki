@@ -15,6 +15,7 @@ use Orchid\Platform\Dashboard;
 use App\Orchid\Layouts\Verifications\VerificationTabMenu;
 use App\Orchid\Layouts\Verifications\VerificationUploadedCommandBarRows;
 use App\Orchid\Layouts\Verifications\VarificationUploadedTable;
+use App\Orchid\Selections\VerificationUploadedOperatorSelection;
 
 class VerificationUploadedScreen extends Screen
 {
@@ -33,7 +34,9 @@ class VerificationUploadedScreen extends Screen
     {
         $dashboard->registerResource('scripts', '/js/custom.js');
         $this->tab = Status::orderBy('weight', 'asc')->offset(self::TAB_NUMBER - 1)->limit(1)->get()->first();
-        $this->table = Working::where('status_id', $this->tab->id)->with('vendor')->with('sut')->with('request')->filters()->paginate($this->paginate); //->orderBy('id', 'desc')->get()
+        $this->table = Working::where('status_id', $this->tab->id)->with('vendor')->with('sut')->with('request')
+            ->filtersApplySelection(VerificationUploadedOperatorSelection::class)
+            ->filters()->paginate($this->paginate); //->orderBy('id', 'desc')->get()
 
         return [
             'tab' => $this->tab,
@@ -86,12 +89,13 @@ class VerificationUploadedScreen extends Screen
         return [
             VerificationTabMenu::class,
             VerificationUploadedCommandBarRows::class,
+            VerificationUploadedOperatorSelection::class,
             VarificationUploadedTable::class,
 
             // ============================================= МОДАЛЬНЫЕ ОКНА ============================================
             //
             // Модальное окно восстановление удаленной записи
-            Layout::modal('ResoreModal', Layout::rows([
+            Layout::modal('RestoreModal', Layout::rows([
                 Input::make('id', 'id')
                     ->mask('9{1,10}')
             ]))

@@ -12,6 +12,7 @@ use Orchid\Screen\AsSource;
 use Orchid\Filters\Filterable;
 use Illuminate\Support\Facades\Log;
 use Orchid\Attachment\Attachable;
+use Orchid\Filters\Types\Like;
 
 class Working extends Model
 {
@@ -42,6 +43,7 @@ class Working extends Model
 
     protected $allowedSorts = [
         'id',
+        'status_id',
         'inv_no',
         'date_import',
         'number_poverki',
@@ -49,6 +51,10 @@ class Working extends Model
         'date_publication',
         'created_at',
         'updated_at',
+    ];
+
+    protected $allowFilters = [
+        'inv_no' => Like::class,
     ];
 
     protected $casts = [

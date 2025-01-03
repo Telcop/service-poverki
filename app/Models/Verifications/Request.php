@@ -30,6 +30,16 @@ class Request extends Model
         return $this->hasMany(Working::class)->chaperone();
     }
 
+    public function getFullAttribute(): string
+    {
+        return sprintf('№%s%s от %s',
+            $this->number, 
+            env('VERIFICATION_NUMBER_REQUEST_MASK'), 
+            date('d.m.Y', strtotime($this->date_from))
+        );
+    }
+
+
     // public function scopeStatusRequest(Builder $query): Builder 
     // {
     //     Log::info('Sut model scopeVendor method');

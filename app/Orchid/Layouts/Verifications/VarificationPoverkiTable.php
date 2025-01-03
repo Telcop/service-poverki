@@ -99,7 +99,7 @@ class VarificationPoverkiTable extends Table
                 ->width('120')
                 ->defaultHidden(),
 
-            TD::make('date_import', 'Дата заявки')
+            TD::make('request.date_from', 'Дата заявки')
                 ->render(function ($model) {
                     return $model->request->date_from->format('d.m.Y');
                 })

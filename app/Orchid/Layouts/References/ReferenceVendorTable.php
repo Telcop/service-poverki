@@ -1,16 +1,18 @@
 <?php
 
-namespace App\Orchid\Layouts\Verifications;
+namespace App\Orchid\Layouts\References;
 
 use Orchid\Screen\Layouts\Table;
 use Orchid\Screen\TD;
+use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Actions\DropDown;
-use App\Models\Verifications\Working;
+use App\Models\Verifications\Vendor as ModelVendor;
 
-class VarificationIndexTable extends Table
+
+class ReferenceVendorTable extends Table
 {
     /**
      * Data source.
@@ -20,7 +22,7 @@ class VarificationIndexTable extends Table
      *
      * @var string
      */
-    protected $target = 'table1';
+    protected $target = 'vendors';
 
     /**
      * @return bool
@@ -43,7 +45,7 @@ class VarificationIndexTable extends Table
      */
     protected function textNotFound(): string
     {
-        return __('There are no entries in this tab');
+        return __('No records were found. Try selecting filters with different values');
     }
 
     /**
@@ -72,46 +74,22 @@ class VarificationIndexTable extends Table
     protected function columns(): iterable
     {
         return [
-            TD::make()
-            ->render(function (Working $working){
-                return CheckBox::make('working[]')
-                    ->value($working->id)
-                    ->checked(false)
-                    ->id("checkbox-{$working->id}");
-            })
-            ->cantHide()
-            ->align(TD::ALIGN_LEFT)
-            ->width('50'),
-
             TD::make('id', 'ID')
                 ->sort()
+                // ->filter(TD::FILTER_NUMERIC)
                 ->align(TD::ALIGN_LEFT)
                 ->width('50'),
 
-            TD::make('inv_no', '№ инвойса')
+            TD::make('vendore_code', 'Модель')
                 ->sort()
+                // ->filter(Input::make())
                 // ->filter(TD::FILTER_TEXT)
-                ->cantHide()
-                ->width('120'),
-
-            TD::make('vendor.vendore_code', 'Модель')
-                // ->sort()
                 ->cantHide()
                 ->width('100'),
 
-            TD::make('vendor.vendore_name', 'Название')
-                ->defaultHidden(),
-
-            TD::make('serial_start', 'Начало серии')
+            TD::make('vendore_name', 'Название')
                 ->cantHide()
-                ->width('130'),
-
-            TD::make('serial_end', 'Конец серии')
-                ->cantHide()
-                ->width('130'),
-
-            TD::make('quantity', 'Кол-во')
-                ->width('90'),
+                ->width('300'),
 
             TD::make('created_at', 'Дата создания')
                 ->sort()
@@ -119,8 +97,7 @@ class VarificationIndexTable extends Table
                     return $model->created_at->format('d.m.Y H:i');
                 })
                 ->width('150')
-                ->align(TD::ALIGN_RIGHT)
-                ->defaultHidden(),
+                ->align(TD::ALIGN_RIGHT),
 
             TD::make('updated_at', 'Дата обновления')
                 ->sort()
@@ -134,18 +111,18 @@ class VarificationIndexTable extends Table
             TD::make(__('Actions'))
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')
-                ->render(fn(Working $working) =>
+                ->render(fn(ModelVendor $item) =>
                     DropDown::make()
                         ->icon('bs.three-dots-vertical')
                         ->list([
                             ModalToggle::make(__('Edit'))
                                 ->modal('UpdateItemModal')
                                 ->method('updateItem')
-                                ->modalTitle('Редактирование ID = ' . $working->id)
-                                ->asyncParameters(['id' => $working->id])
+                                ->modalTitle('Редактирование ID = ' . $item->id)
+                                ->asyncParameters(['id' => $item->id])
                                 ->icon('bs.pencil'),
                             Button::make(__('Delete'))
-                                ->method('deleteItem', ['id' => $working->id])
+                                ->method('deleteItem', ['id' => $item->id])
                                 ->icon('bs.trash3')
                                 ->confirm('После удаления Вы потеряете эту запись')
                         ]))

@@ -10,12 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Crypt;
 use Orchid\Screen\AsSource;
+use Orchid\Filters\Filterable;
 use Illuminate\Support\Facades\Log;
 
 
 class Sut extends Model
 {
-    use SoftDeletes, HasFactory, AsSource;
+    use SoftDeletes, HasFactory, AsSource, Filterable;
     
     protected $table = 'v_sut';
 
@@ -24,6 +25,19 @@ class Sut extends Model
         'number',
         'date_from',
         'date_to'
+    ];
+
+    protected $allowedSorts = [
+        'id',
+        'number',
+        'date_from',
+        'date_to',
+        'created_at',
+        'updated_at'
+    ];
+
+    protected $allowFilters = [
+        'id'
     ];
 
     protected $casts = [

@@ -20,6 +20,7 @@ use App\Orchid\Layouts\Verifications\VarificationRequestTable;
 use App\Orchid\Layouts\Verifications\AddVerificationRequestModalRows;
 use Exception;
 use Illuminate\Support\Carbon;
+use App\Orchid\Selections\VerificationRequestOperatorSelection;
 
 class VerificationRequestScreen extends Screen
 {
@@ -42,6 +43,7 @@ class VerificationRequestScreen extends Screen
             ->with('vendor')
             ->with('sut')
             ->with('request')
+            ->filtersApplySelection(VerificationRequestOperatorSelection::class)
             ->filters()->paginate($this->paginate); //->orderBy('id', 'desc')->get()
 
         return [
@@ -94,7 +96,8 @@ class VerificationRequestScreen extends Screen
     { 
         return [
             VerificationTabMenu::class,
-            VerificationRequestCommandBarRows::class,
+            // VerificationRequestCommandBarRows::class,
+            VerificationRequestOperatorSelection::class,
             VarificationRequestTable::class,
 
             // ============================================= МОДАЛЬНЫЕ ОКНА ============================================
@@ -106,7 +109,7 @@ class VerificationRequestScreen extends Screen
                 ->size(Modal::SIZE_LG), //XL
                         
             // Модальное окно восстановление удаленной записи
-            Layout::modal('ResoreModal', Layout::rows([
+            Layout::modal('RestoreModal', Layout::rows([
                 Input::make('id', 'id')
                     ->mask('9{1,10}')
             ]))

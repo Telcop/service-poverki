@@ -4,10 +4,18 @@ namespace App\Models\Verifications;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Crypt;
+use Orchid\Screen\TD;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Orchid\Screen\AsSource;
 use Orchid\Filters\Filterable;
+use Orchid\Filters\Types\Like;
+use Orchid\Filters\Types\Where;
+use Orchid\Filters\Types\WhereDate;
+
+use Illuminate\Support\Facades\Log;
 
 class Vendor extends Model
 {
@@ -21,8 +29,17 @@ class Vendor extends Model
     ];
 
     protected $allowedSorts = [
-        'vendore_code'
+        'id',
+        'vendore_code',
+        'created_at',
+        'updated_at'
     ];
+
+    protected $allowedFilters = [
+        'id' => Where::class,
+        'vendore_code' => Like::class,
+    ];
+
 
     public function working(): HasMany 
     {
@@ -33,5 +50,14 @@ class Vendor extends Model
     {
         return $this->hasMany(Sut::class);
     }
+
+    public function scopeActive(Builder $query): Builder 
+    {
+        Log::info('Vendor model scopeVendor method');
+        // $data = unserialize(Crypt::decryptString(request()->post('scope')));
+        // Log::info('scopeVendore data:' . $data);
+        return $query->orderBy('vendore_code', 'asc'); //request()->post('scope')
+    }
+
 
 }

@@ -3,9 +3,26 @@
 namespace App\Orchid\Screens\Reports;
 
 use Orchid\Screen\Screen;
+use Illuminate\Http\Request;
+use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Layouts\Modal;
+use Orchid\Support\Facades\Layout;
+use Orchid\Support\Facades\Toast;
+use App\Models\Verifications\Verification;
+use App\Models\Verifications\Working;
+use App\Models\Verifications\Status;
+use Orchid\Platform\Dashboard;
+use App\Orchid\Layouts\Verifications\VerificationTabMenu;
+use App\Orchid\Layouts\Reports\ReportReestrCommandBarRows;
+use App\Orchid\Layouts\Reports\ReportReestrTable;
+use App\Orchid\Filters\StatusFilter;
+use App\Orchid\Selections\ReestrOperatorSelection;
 
 class ReestrScreen extends Screen
 {
+    protected $paginate = 10;
+    protected $table;
+
     /**
      * Fetch data to be displayed on the screen.
      *
@@ -13,7 +30,14 @@ class ReestrScreen extends Screen
      */
     public function query(): iterable
     {
-        return [];
+        $this->table = Working::with('status')->with('vendor')->with('sut')->with('request')
+            ->filtersApplySelection(ReestrOperatorSelection::class)
+            ->filters()
+            ->paginate($this->paginate); //->orderBy('id', 'desc')->get()
+
+        return [
+            'reestr' => $this->table, 
+        ];
     }
 
     /**
@@ -23,7 +47,7 @@ class ReestrScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'ReestrScreen';
+        return 'Реестр поверок';
     }
 
     /**
@@ -34,6 +58,13 @@ class ReestrScreen extends Screen
     public function commandBar(): iterable
     {
         return [];
+    }    
+    
+    public function permission(): ?iterable
+    {
+        return [
+            'platform.modules.reports',
+        ];
     }
 
     /**
@@ -43,6 +74,10 @@ class ReestrScreen extends Screen
      */
     public function layout(): iterable
     {
-        return [];
+        return [
+            // ReportReestrCommandBarRows::class,
+            ReestrOperatorSelection::class,
+            ReportReestrTable::class,
+        ];
     }
 }
