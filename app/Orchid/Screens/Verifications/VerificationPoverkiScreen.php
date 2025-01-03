@@ -156,7 +156,7 @@ class VerificationPoverkiScreen extends Screen
                 ];
                 $working->number_poverki = $num;
                 $working->date_poverki = $date;
-                $working->name_poverki = str_replace(array_keys($attributes), array_values($attributes), ENV('NAME_TEMPLATE_POVERKI'));
+                $working->name_poverki = str_replace(array_keys($attributes), array_values($attributes), config('custom.name_template_poverki'));
                 $working->status_id = self::statusId();
                 $working->attachment()->delete();
                 $working->attachment()->syncWithoutDetaching(

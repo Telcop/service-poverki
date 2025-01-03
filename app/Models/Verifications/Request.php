@@ -34,7 +34,7 @@ class Request extends Model
     {
         return sprintf('№%s%s от %s',
             $this->number, 
-            env('VERIFICATION_NUMBER_REQUEST_MASK'), 
+            config('custom.verification_number_request_mask'), 
             date('d.m.Y', strtotime($this->date_from))
         );
     }

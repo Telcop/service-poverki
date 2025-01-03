@@ -58,7 +58,7 @@ class RequestFilter extends Filter
                 ->fromModel(ModelRequest::class, 'number', 'number')
                 ->displayAppend('full')
                 ->empty()
-                ->value($this->request->get('number') . env('VERIFICATION_NUMBER_REQUEST_MASK'))
+                ->value($this->request->get('number') . config('custom.verification_number_request_mask'))
                 ->title(__('Request')),
         ];
     }

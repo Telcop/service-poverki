@@ -117,7 +117,7 @@ class ReportReestrTable extends Table
             TD::make('request', '№ Заявки/дата')
                 ->render(function ($model) {
                     if (isset($model->request->number) && isset($model->request->date_from)) {
-                        $res = $model->request->number . env('VERIFICATION_NUMBER_REQUEST_MASK') . ' от ' . $model->request->date_from->format('d.m.Y');
+                        $res = $model->request->number . config('custom.verification_number_request_mask') . ' от ' . $model->request->date_from->format('d.m.Y');
                     } else {
                         $res = '';
                     }
@@ -129,7 +129,7 @@ class ReportReestrTable extends Table
             TD::make('request.number', 'Номер заявки')
                 ->render(function ($model) {
                     if (isset($model->request->number)) {
-                        $res = $model->request->number . env('VERIFICATION_NUMBER_REQUEST_MASK');
+                        $res = $model->request->number . config('custom.verification_number_request_mask');
                     } else {
                         $res = '';
                     }

@@ -93,7 +93,7 @@ class VarificationPoverkiTable extends Table
 
             TD::make('request.number', 'Номер заявки')
                 ->render(function ($model) {
-                    return $model->request->number . env('VERIFICATION_NUMBER_REQUEST_MASK');
+                    return $model->request->number . config('custom.verification_number_request_mask');
                 })
                 ->align(TD::ALIGN_CENTER)
                 ->width('120')

@@ -48,9 +48,9 @@ class Settings extends Model
         if (!$res) {
             $res = new Settings;
             $res->name = 'NumberRequest';
-            $res->value = env('VERIFICATION_NUMBER_REQUEST_START', 0); 
+            $res->value = config('custom.verification_number_request_start'); 
         }
-        $value = (int)$res->value ?? env('VERIFICATION_NUMBER_REQUEST_START', 0);
+        $value = (int)$res->value ?? config('custom.verification_number_request_start');
         $value++;
         $res->value = (string)$value;
         $res->save();
