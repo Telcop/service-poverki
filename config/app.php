@@ -14,6 +14,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'name_header' => env('APP_NAME_HEADER', 'Сервис поверок'),
+    'name_footer' => env('APP_NAME_FOOTER', 'service-poverki'),
 
     /*
     |--------------------------------------------------------------------------
