@@ -55,7 +55,7 @@ class InvoiceFilter extends Filter
     {
         return [
             Input::make('invoice')
-            ->mask('9{10}')
+            ->mask('9{8,10}-{0,1}9{0,2}')    
             ->type('number')
             ->title(__('Invoice number')),
         ];

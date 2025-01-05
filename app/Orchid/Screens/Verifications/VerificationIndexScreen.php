@@ -8,6 +8,8 @@ use Orchid\Screen\Screen;
 use Orchid\Screen\Layouts\Modal;
 use Orchid\Support\Facades\Layout;
 use Orchid\Support\Facades\Toast;
+use Orchid\Support\Facades\Alert;
+use Orchid\Support\Color;
 use App\Models\Verifications\Working;
 use App\Models\Verifications\Sut;
 use App\Models\Verifications\Status;
@@ -20,6 +22,10 @@ use App\Orchid\Layouts\Verifications\CreateOrUpdateIndexModalRows;
 use App\Orchid\Layouts\Verifications\ImportInvoicesIndexModalRows;
 use Illuminate\Support\Carbon;
 use App\Orchid\Selections\VerificationIndexOperatorSelection;
+use App\Imports\InvoiceImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Orchid\Attachment\Models\Attachment;
+
 
 class VerificationIndexScreen extends Screen
 {
@@ -119,7 +125,7 @@ class VerificationIndexScreen extends Screen
             // Модальное окно Экспорт инвойсов из таблицы Excel
             Layout::modal('ImportInvoicesModal', ImportInvoicesIndexModalRows::class)
                 ->title('Импорт инвойсов из таблицы xls')
-                ->applyButton('')
+                ->applyButton('Импорт')
                 ->size(Modal::SIZE_LG),
         ];
     }
@@ -184,17 +190,18 @@ class VerificationIndexScreen extends Screen
         }
     }
 
-    public function exportFormExcelInvoices(Request $request): void
+    public function importFormExcelInvoices(Request $request): void
     {
-        $this->disable_entering = true;
-        Toast::warning("TEST CHECK");
-        // Toast::warning($request->get('toast', 'Hello, world! This is a toast message.'));
+        $attachment = Attachment::find($request->input('file_upload'));
+        $name = $attachment->path . $attachment->name . '.' . $attachment->extension;
+
+        Excel::import(new InvoiceImport, $name, $attachment->disk);
     }
 
     // Обработка Ввод даты поставки в РФ
     public function enteringTheDate(Request $request): void
     {
-        $date_entering = $date = Carbon::parse($request->input('dateEntering')); 
+        $date_entering = Carbon::parse($request->input('dateEntering')); 
         $error = [];
         $ok = [];
 

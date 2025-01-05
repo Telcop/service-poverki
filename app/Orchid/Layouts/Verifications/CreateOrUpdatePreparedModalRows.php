@@ -34,7 +34,7 @@ class CreateOrUpdatePreparedModalRows extends Rows
 
             Group::make([
                 Input::make('item.inv_no')
-                    ->mask('9{10}')    
+                    ->mask('9{8,10}-{0,1}9{0,2}')    
                     ->required()
                     ->title('№ инвойса'),
                 Relation::make('item.vendor_id')

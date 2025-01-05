@@ -4,6 +4,7 @@ namespace App\Orchid\Layouts\Verifications;
 
 use Orchid\Screen\Field;
 use Orchid\Screen\Layouts\Rows;
+use Orchid\Screen\Fields\Attach;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Relation;
@@ -26,10 +27,18 @@ class ImportInvoicesIndexModalRows extends Rows
     protected function fields(): iterable
     {
         return [
-            Input::make('file_upload')
-                ->type('file')
+
+            Attach::make('file_upload')
                 ->title('Загрузить файл xls')
-                ->horizontal(),
+                ->storage('import')
+                ->accept('.xls, .xlsx')
+                ->maxSize(5)
+                ->help('Загрузите файл с расширением xls/xlsx для импорта инвойсов.'),
+
+            // Input::make('file_upload')
+            //     ->type('file')
+            //     ->title('Загрузить файл xls')
+            //     ->horizontal(),
         ];
     }
 }
