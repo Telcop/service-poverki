@@ -4,6 +4,7 @@ namespace App\Orchid\Layouts\Verifications;
 
 use Orchid\Screen\Layouts\Table;
 use Orchid\Screen\TD;
+use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Actions\DropDown;
@@ -172,6 +173,11 @@ class VarificationRequestTable extends Table
                                 ->modalTitle('Добавление поверки ID = ' . $working->id)
                                 ->asyncParameters(['id' => $working->id])
                                 ->icon('bs.arrow-right-circle'),
+                            Link::make(__('Upload the application'))
+                                // ->href('/download/requests/' . $working->request->number . '/' . $working->request->url_request)
+                                ->href(env('PATH_FTP') . env('FTP_ROOT_REQUESTS') . DIRECTORY_SEPARATOR . $working->request->url_request)
+                                ->icon('bs.filetype-xls')
+                                ->target('_blank'),
                             Button::make(__('Return the request'))
                                 ->method('returnRequest', ['id' => $working->request_id])
                                 ->icon('bs.arrow-90deg-left')

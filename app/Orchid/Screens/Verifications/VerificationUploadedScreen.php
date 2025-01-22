@@ -16,11 +16,13 @@ use App\Orchid\Layouts\Verifications\VerificationTabMenu;
 use App\Orchid\Layouts\Verifications\VerificationUploadedCommandBarRows;
 use App\Orchid\Layouts\Verifications\VarificationUploadedTable;
 use App\Orchid\Selections\VerificationUploadedOperatorSelection;
+use App\Models\Logging;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationUploadedScreen extends Screen
 {
     protected const TAB_NUMBER = 5; 
-    protected $paginate = 10;
+    protected $paginate = 50;
     protected $tab;
     protected $table;
     protected $disable_entering = true;
@@ -140,10 +142,22 @@ class VerificationUploadedScreen extends Screen
         }
         if (empty($error)) {
             Toast::info(self::poverkiMessage($ok))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_PREV_STATUS, [
+                'status_id' => self::statusId(-1),
+                'ids' => $ok,
+            ]);
         } elseif (empty($ok)) {
             Toast::warning(self::poverkiMessage($error, true))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_PREV_STATUS, [
+                'Error next status Uploaded ids' => $error
+            ]);
         } else {
             Toast::error(self::poverkiMessage($ok) . self::poverkiMessage($error, true))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_PREV_STATUS, [
+                'status_id' => self::statusId(-1),
+                'ids_ok' => $ok,
+                'ids_error' => $error
+            ]);
         }       
     }
 

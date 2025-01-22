@@ -10,6 +10,7 @@ use Orchid\Screen\Fields\Group;
 use Orchid\Screen\TD;
 use Orchid\Screen\Fields\DateTimer;
 use Illuminate\Support\Facades\Auth;
+use Orchid\Screen\Fields\CheckBox;
 
 class VerificationPreparedCommandBarRows extends Rows
 {
@@ -37,6 +38,12 @@ class VerificationPreparedCommandBarRows extends Rows
                         // ->disabled(true)
                         ->canSee(Auth::user()->hasAccess('platform.admin.logging')),
 
+                    CheckBox::make('selectAll')
+                        ->value(0)
+                        ->placeholder('Выделить все')
+                        ->align(TD::ALIGN_RIGHT)
+                        ->id('select-all'),
+
                     DateTimer::make('dateRequest')
                         ->title('Дата заявки:')
                         ->format('d.m.Y')
@@ -57,7 +64,7 @@ class VerificationPreparedCommandBarRows extends Rows
                         ->disabled($this->query->has('disable_entering'))
                         ->id('date-button')
             ])
-            ->widthColumns('15% 18% 18%')
+            ->widthColumns('15% 10% 18% 18%')
             ->alignEnd(),
         ];
     }

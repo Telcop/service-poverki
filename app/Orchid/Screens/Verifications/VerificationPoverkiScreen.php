@@ -22,11 +22,13 @@ use App\Orchid\Layouts\Verifications\EditVerificationPoverkiModalRows;
 use Exception;
 use Illuminate\Support\Carbon;
 use App\Orchid\Selections\VerificationPoverkiOperatorSelection;
+use App\Models\Logging;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationPoverkiScreen extends Screen
 {
     protected const TAB_NUMBER = 4; // 1 вкладка
-    protected $paginate = 10;
+    protected $paginate = 50;
     protected $tab;
     protected $table;
     protected $disable_entering = true;
@@ -166,9 +168,22 @@ class VerificationPoverkiScreen extends Screen
                 $working->save();
                 Toast::info("Изменено " . $working->name_poverki)
                 ->delay(6000);
+                Logging::setAction(Auth::user()->name, Logging::ACTION_UPDATE_POVERKI, [
+                    'new_status_id' => self::statusId(),
+                    'id' => $request->input('item.id'),
+                    'number_poverki' => $num,
+                    'date_poverki' => $date,
+                    'poverka' => [
+                        'disk' => 'ftp_poverki',
+                        'url' => $working->url_poverki
+                    ]
+                ]);
             });
         } catch (Exception $e) {
             Toast::error("Операция не может быть выполнена");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_UPDATE_POVERKI, [
+                'Error update id ' => $request->input('item.id')
+            ]);
         }
     }
 
@@ -180,6 +195,8 @@ class VerificationPoverkiScreen extends Screen
             DB::transaction(function () use ($id) {
                 $working = Working::find($id);
                 $poverka = $working->number_poverki;
+                $date = $working->date_poverki;
+                $url = $working->url_poverki;
                 $working->number_poverki = null;
                 $working->date_poverki = null;
                 $working->name_poverki = null;
@@ -188,9 +205,22 @@ class VerificationPoverkiScreen extends Screen
                 $working->attachments()->delete();
                 $working->save();
                 Toast::info("Поверка №" . $poverka . " по модели " . $working->vendor->vendore_code . " (ID = " . $working->id . ") возвращен на доработку");
+                Logging::setAction(Auth::user()->name, Logging::ACTION_PREV_STATUS, [
+                    'status_id' => self::statusId(-1),
+                    'id' => $id,
+                    'number_poverki' => $poverka,
+                    'date_poverki' => $date,
+                    'poverka' => [
+                        'disk' => 'ftp_poverki',
+                        'url' => $url
+                    ]
+                ]);
             });
         } catch (Exception $e) {
             Toast::error("Операция не может быть выполнена");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_PREV_STATUS, [
+                'Error prev status Poverki id' => $id
+            ]);
         }
    }
 
@@ -235,10 +265,22 @@ class VerificationPoverkiScreen extends Screen
         }
         if (empty($error)) {
             Toast::info(self::uploadedMessage($ok))->delay(10000);
-        } elseif (empty($ok)) {
+            Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                'new_status_id' => self::statusId(1),
+                'ids' => $ok,
+            ]);
+    } elseif (empty($ok)) {
             Toast::warning(self::uploadedMessage($error, true))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                'Error next status Poverki ids' => $error
+            ]);
         } else {
             Toast::error(self::uploadedMessage($ok) . self::uploadedMessage($error, true))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                'new_status_id' => self::statusId(1),
+                'ids_ok' => $ok,
+                'ids_error' => $error
+            ]);
         }       
     }
 

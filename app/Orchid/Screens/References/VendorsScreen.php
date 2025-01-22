@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Auth;
 class VendorsScreen extends Screen
 {
 
-    protected $paginate = 10;
+    protected $paginate = 50;
     protected $table;
 
     /**

@@ -12,6 +12,7 @@ use App\Orchid\Filters\InvoiceFilter;
 use App\Orchid\Filters\RequestFilter;
 use App\Orchid\Filters\CertificateFilter;
 
+
 class VerificationIndexOperatorSelection extends Selection
 {
     // public $template = self::TEMPLATE_LINE;
@@ -21,7 +22,7 @@ class VerificationIndexOperatorSelection extends Selection
      */
     public function filters(): iterable
     {
-        return [    
+       return [    
             IdFilter::class,        
             VendorModelFilter::class,
             SerialNumberFilter::class,

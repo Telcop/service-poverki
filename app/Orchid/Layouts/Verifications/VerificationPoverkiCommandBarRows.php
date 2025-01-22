@@ -9,6 +9,7 @@ use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\TD;
 use Illuminate\Support\Facades\Auth;
+use Orchid\Screen\Fields\CheckBox;
 
 class VerificationPoverkiCommandBarRows extends Rows
 {
@@ -28,6 +29,12 @@ class VerificationPoverkiCommandBarRows extends Rows
     {
         return [
             Group::make([
+                    CheckBox::make('selectAll')
+                        ->value(0)
+                        ->placeholder('Выделить все')
+                        ->align(TD::ALIGN_RIGHT)
+                        ->id('select-all'),
+
                     Button::make(__('Activate verifications'))
                         ->method('activateVerifications')
                         ->class('btn icon-link btn-secondary rounded')
@@ -42,7 +49,7 @@ class VerificationPoverkiCommandBarRows extends Rows
                         ->class('btn icon-link btn-secondary rounded')
                         ->canSee(Auth::user()->hasAccess('platform.admin.logging')),
             ])
-            ->widthColumns('19% 13%')
+            ->widthColumns('10% 19% 13%')
             ->alignEnd(),
         ];
     }

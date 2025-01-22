@@ -21,11 +21,13 @@ use App\Orchid\Layouts\Verifications\AddVerificationRequestModalRows;
 use Exception;
 use Illuminate\Support\Carbon;
 use App\Orchid\Selections\VerificationRequestOperatorSelection;
+use App\Models\Logging;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationRequestScreen extends Screen
 {
     protected const TAB_NUMBER = 3; // 3 вкладка
-    protected $paginate = 10;
+    protected $paginate = 50;
     protected $tab;
     protected $table;
     protected $disable_entering = true;
@@ -44,7 +46,7 @@ class VerificationRequestScreen extends Screen
             ->with('sut')
             ->with('request')
             ->filtersApplySelection(VerificationRequestOperatorSelection::class)
-            ->filters()->paginate($this->paginate); //->orderBy('id', 'desc')->get()
+            ->filters()->paginate($this->paginate); // config('custom.paginate') //->orderBy('id', 'desc')->get()
 
         return [
             'tab' => $this->tab,
@@ -163,9 +165,22 @@ class VerificationRequestScreen extends Screen
                 $working->save();
                 Toast::info("Добавлено " . $working->name_poverki)
                 ->delay(6000);
+                Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                    'new_status_id' => self::statusId(1),
+                    'id' => $request->input('item.id'),
+                    'number_poverki' => $num,
+                    'date_poverki' => $date,
+                    'poverka' => [
+                        'disk' => 'ftp_poverki',
+                        'url' => $working->url_poverki
+                    ]
+                ]);
             });
         } catch (Exception $e) {
             Toast::error("Операция не может быть выполнена");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                'Error next status Request ids' => $request->input('item.id')
+            ]);
         }
     }
 
@@ -179,6 +194,7 @@ class VerificationRequestScreen extends Screen
                 $req = Req::findOrFail($request_id);
                 $num = $req->number;
                 $date = $req->date_from;
+                $url = $req->url_request;
                 Working::where('request_id', $request_id)
                     ->update([
                         'request_id' => null,  
@@ -186,9 +202,21 @@ class VerificationRequestScreen extends Screen
                     ]);
                 $req->delete();
                 Toast::info("Заявка №" . $num . " от " . date_format($date, 'd.m.Y') . " расформирована");
+                Logging::setAction(Auth::user()->name, Logging::ACTION_PREV_STATUS, [
+                    'status_id' => self::statusId(-1),
+                    'number' => $num,
+                    'date_from' => $date,
+                    'request' => [
+                        'disk' => 'ftp_requests',
+                        'url' => $url
+                    ]
+                ]);
             });
         } catch (Exception $e) {
             Toast::error("Операция не может быть выполнена");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_PREV_STATUS, [
+                'Error prev status Request id' => $request->input('id')
+            ]);
         }
    }
 

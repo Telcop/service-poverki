@@ -17,6 +17,7 @@ use Orchid\Platform\Dashboard;
 use Illuminate\Support\Facades\Log;
 use App\Orchid\Layouts\Verifications\VerificationTabMenu;
 use App\Orchid\Layouts\Verifications\VerificationIndexCommandBarRows;
+use App\Orchid\Layouts\Verifications\VerificationIndexCommandBar2Rows;
 use App\Orchid\Layouts\Verifications\VarificationIndexTable;
 use App\Orchid\Layouts\Verifications\CreateOrUpdateIndexModalRows;
 use App\Orchid\Layouts\Verifications\ImportInvoicesIndexModalRows;
@@ -25,12 +26,13 @@ use App\Orchid\Selections\VerificationIndexOperatorSelection;
 use App\Imports\InvoiceImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Orchid\Attachment\Models\Attachment;
-
+use App\Models\Logging;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationIndexScreen extends Screen
 {
     protected const TAB_NUMBER = 1; // 1 вкладка
-    protected $paginate = 10;
+    protected $paginate = 50;
     protected $tab;
     protected $table;
     protected $disable_entering = true;
@@ -47,7 +49,7 @@ class VerificationIndexScreen extends Screen
         $this->table = Working::where('status_id', $this->tab->id)->with('vendor')
             ->filtersApplySelection(VerificationIndexOperatorSelection::class)
             ->filters()
-            ->paginate($this->paginate); 
+            ->paginate($this->paginate); //$this->paginate); 
 
         return [
             'tab' => $this->tab,
@@ -143,6 +145,9 @@ class VerificationIndexScreen extends Screen
         } else {
             Toast::warning("Не корректные данные");
         }
+        Logging::setAction(Auth::user()->name, Logging::ACTION_CREATE_INVOICE, [
+            'id' => $working->id
+           ]);
     }
 
     // Асинхонный метод Редактирование записи
@@ -166,8 +171,14 @@ class VerificationIndexScreen extends Screen
         if ($working['quantity'] >= 1) {
             Working::find($request->input('item.id'))->update(array_merge($request->item, $working));
             Toast::info("Запись c id = " . $request->input('item.id') . " обновлена");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_UPDATE_INVOICE_1, [
+                'id' => $request->input('item.id')
+            ]);
         } else {
             Toast::warning("Не корректные данные");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_UPDATE_INVOICE_1, [
+                'Error update ' . $request->input('item.id')
+            ]);
         }
     }
 
@@ -176,6 +187,9 @@ class VerificationIndexScreen extends Screen
     {
         Working::destroy($id);
         Toast::warning("Запись c id = " . $id . " удалена");
+        Logging::setAction(Auth::user()->name, Logging::ACTION_DELETE_INVOICE, [
+            'id' => $id
+        ]);
     }
 
     // Обработка Восстановление удаленной записи
@@ -196,8 +210,15 @@ class VerificationIndexScreen extends Screen
         $name = $attachment->path . $attachment->name . '.' . $attachment->extension;
 
         Excel::import(new InvoiceImport, $name, $attachment->disk);
-    }
 
+        Logging::setAction(Auth::user()->name, Logging::ACTION_IMPORT_INVOICES, [
+            'attachment' => [
+                'disk' => $attachment->disk,
+                'url' => $name
+            ]
+           ]);
+    }
+    
     // Обработка Ввод даты поставки в РФ
     public function enteringTheDate(Request $request): void
     {
@@ -234,11 +255,26 @@ class VerificationIndexScreen extends Screen
 
         if (empty($error)) {
             Toast::info(self::sutMessage($ok))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                'new_status_id' => $this->tab->id,
+                'ids' => $request->input('working'),
+                'date_import' => $request->input('dateEntering'),
+            ]);
         } elseif (empty($ok)) {
             Toast::warning(self::sutMessage($error, true))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                'Error next status Index ids' => $request->input('working')
+            ]);
         } else {
             Toast::error(self::SutMessage($ok) . self::sutMessage($error, true))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                'new_status_id' => $this->tab->id,
+                'ids_ok' => $ok,
+                'date_import' => $request->input('dateEntering'),
+                'ids_error' => $error,
+            ]);
         }       
+
     }
 
     // Корректировка записи

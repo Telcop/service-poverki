@@ -8,6 +8,7 @@ use Orchid\Screen\Screen;
 use Orchid\Screen\Layouts\Modal;
 use Orchid\Support\Facades\Layout;
 use Orchid\Support\Facades\Toast;
+use Orchid\Support\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 use App\Models\Verifications\Working;
 use App\Models\Verifications\Request as Req;
@@ -21,11 +22,18 @@ use App\Orchid\Layouts\Verifications\VarificationPreparedTable;
 use App\Orchid\Layouts\Verifications\CreateOrUpdatePreparedModalRows;
 use App\Orchid\Selections\VerificationPreparedOperatorSelection;
 use Exception;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RequestExport;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Orchid\Support\Color;
+use App\Models\Logging;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationPreparedScreen extends Screen
 {
     protected const TAB_NUMBER = 2; // 1 вкладка
-    protected $paginate = 10;
+    protected $paginate = 50;
     protected $tab;
     protected $table;
     protected $ids;
@@ -43,7 +51,7 @@ class VerificationPreparedScreen extends Screen
         $this->table = Working::where('status_id', $this->tab->id)->with('vendor')->with('sut')
             ->filtersApplySelection(VerificationPreparedOperatorSelection::class)
             ->filters()
-            ->paginate($this->paginate); //->orderBy('id', 'desc')->get()
+            ->paginate($this->paginate); //config('custom.paginate') //->orderBy('id', 'desc')->get()
 
         return [
             'tab' => $this->tab,
@@ -141,8 +149,14 @@ class VerificationPreparedScreen extends Screen
         if ($working['quantity'] >= 1) {
             Working::find($request->input('item.id'))->update(array_merge($request->item, $working));
             Toast::info("Запись c id = " . $request->input('item.id') . " обновлена");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_UPDATE_INVOICE_2, [
+                'id' => $request->input('item.id')
+            ]);
         } else {
             Toast::warning("Не корректные данные");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_UPDATE_INVOICE_2, [
+                'Error update id ' . $request->input('item.id')
+            ]);
         }
     }
 
@@ -157,9 +171,16 @@ class VerificationPreparedScreen extends Screen
                 $working->status_id = self::statusId(-1);
                 $working->save();
                 Toast::info("Инвойс №" . $working->inv_no . " с моделью " . $working->vendor->vendore_code . " (ID = " . $working->id . ") возвращен на доработку");
-            });
+                Logging::setAction(Auth::user()->name, Logging::ACTION_PREV_STATUS, [
+                    'status_id' => self::statusId(-1),
+                    'id' => $id
+                ]);
+                });
         } catch (Exception $e) {
             Toast::error("Операция не может быть выполнена");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_PREV_STATUS, [
+                'Error prev status Prepared ids' => $id
+            ]);
         }
    }
 
@@ -168,6 +189,9 @@ class VerificationPreparedScreen extends Screen
     {
         Working::destroy($id);
         Toast::warning("Запись c id = " . $id . " удалена");
+        Logging::setAction(Auth::user()->name, Logging::ACTION_DELETE_INVOICE, [
+            'id' => $id
+        ]);
     }
 
     // Обработка Восстановление удаленной записи
@@ -182,35 +206,65 @@ class VerificationPreparedScreen extends Screen
         }
     }
 
-    // Обработка Ввод даты поставки в РФ
-    public function createRequest(Request $request): void
+    // Обработка Создание заявки
+    public function createRequest(Request $request) //: void
     {
+        $ids = $request->input('working');
         $error = [];
         $ok = [];
         $this->tab = Status::orderBy('weight', 'asc')->offset(self::TAB_NUMBER)->limit(1)->get()->first();
         $number = ModelSettings::incrementNmberRequest();
+        $date_from = $request->dateRequest;
+        $url_request = date('Y/m/d/') . (string)Str::uuid() . '.xlsx';
         $req = Req::create([
-            'date_from' => $request->dateRequest,
-            'number' => $number 
+            'date_from' => $date_from,
+            'number' => $number,
+            'url_request' => $url_request
         ]);
-        if (!$req) {
-            $error = $request->input('working');
-        } else {
-            $ok = $request->input('working');
-        }
-        foreach ($request->input('working') as $id) {
-            Working::find($id)->update(array_merge(
-                ['request_id' => $req->id],
-                self::statusItem($this->tab->id)  
-            ));
-        }
-        if (empty($error)) {
+        if (!empty($req)) {
+            $ok = $ids;
+            foreach ($ids as $id) {
+                Working::find($id)->update(array_merge(
+                    ['request_id' => $req->id],
+                    self::statusItem($this->tab->id)  
+                ));
+            }
+            // Создаем заявку в excel
+            Excel::store(new RequestExport($req->id), $url_request, 'ftp_requests');
+            $filename = 'Запрос ' . $number . config('custom.verification_number_request_mask') . ' на поверку.xlsx';
+            // Сообщение о новой заявки и ссылка для скачивания
+            $filename_arr = explode('/', $url_request);
+            $data = [
+                'storage' => 'requests',
+                'num' => $number,
+                'y' => $filename_arr[0],
+                'm' => $filename_arr[1],
+                'd' => $filename_arr[2],
+                'filename' => $filename_arr[3]
+            ];
+            Alert::view('export.alertsuccess', Color::INFO(), [
+                'data' => $data,
+                'date' => $date_from,
+           ]); // WARNING DARK
+
             Toast::info(self::requestMessage($ok))->delay(10000);
-        } elseif (empty($ok)) {
-            Toast::warning(self::requestMessage($error, true))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                'new_status_id' => $this->tab->id,
+                'ids' => $ids,
+                'number' => $number,
+                'date_from' => $date_from,
+                'request' => [
+                    'disk' => 'ftp_requests',
+                    'url' => $url_request
+                ]
+            ]);
         } else {
-            Toast::error(self::requestMessage($ok) . self::requestMessage($error, true))->delay(10000);
-        }       
+            $error = $ids;
+            Toast::warning(self::requestMessage($error, true))->delay(10000);
+            Logging::setAction(Auth::user()->name, Logging::ACTION_NEXT_STATUS, [
+                'Error next status Prepared ids' => $ids
+            ]);
+        }
     }
 
     // Корректировка записи

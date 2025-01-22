@@ -8,5 +8,6 @@ return [
     'verification_number_request_mask' => env('VERIFICATION_NUMBER_REQUEST_MASK', '-ЗП'),
     // Щаблон названия письма о поверке
     'name_template_poverki' => env('NAME_TEMPLATE_POVERKI', 'Письмо № #1 от #2 о поверке, прибор #3 (серийные номера #4-#5)'),
-
+    // Количество записей на одной странице при пагинации
+    'paginate' => env('PAGINATE', 50),
 ];

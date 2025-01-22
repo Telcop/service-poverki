@@ -201,10 +201,13 @@ class VarificationPoverkiTable extends Table
                     DropDown::make()
                         ->icon('bs.three-dots-vertical')
                         ->list([
-                            Link::make(__('Open the verification'))
+                            Link::make(__('Open the verification letter'))
                                 ->href(env('PATH_FTP') . env('FTP_ROOT_POVERKI') . DIRECTORY_SEPARATOR . $working->url_poverki)
                                 ->icon('bs.file-earmark-pdf')
                                 ->target('_blank'),
+                            Link::make(__('Upload the verification letter'))
+                                ->href('/download/poverki/' . $working->number_poverki . '/' . $working->url_poverki)
+                                ->icon('bs.filetype-pdf'),
                             ModalToggle::make(__('Edit the verification'))
                                 ->modal('EditVerification')
                                 ->method('editVerification')

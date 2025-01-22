@@ -20,7 +20,7 @@ use App\Orchid\Selections\ReestrOperatorSelection;
 
 class ReestrScreen extends Screen
 {
-    protected $paginate = 10;
+    protected $paginate = 50;
     protected $table;
 
     /**
