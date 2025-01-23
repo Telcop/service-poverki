@@ -18,7 +18,7 @@ class DownloadController extends Controller
                 break;
             case "poverki":
                 $disk = 'ftp_poverki';
-                $name = 'Свидетельство о поверке ' . $num . '.pdf';
+                $name = $num . '.pdf';
                 break; 
             case "import":
                 $disk = "import";

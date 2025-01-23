@@ -209,7 +209,7 @@ class VarificationUploadedTable extends Table
                                 ->icon('bs.file-earmark-pdf')
                                 ->target('_blank'),
                             Link::make(__('Upload the verification letter'))
-                                ->href('/download/poverki/' . $working->number_poverki . '/' . $working->url_poverki)
+                                ->href('/download/poverki/' . $working->name_poverki . '/' . $working->url_poverki)
                                 ->icon('bs.filetype-pdf'),
                         ]))
         ];
