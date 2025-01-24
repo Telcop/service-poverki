@@ -18,7 +18,7 @@ class DownloadController extends Controller
                 break;
             case "poverki":
                 $disk = 'ftp_poverki';
-                $name = $num . '.pdf';
+                $name = self::correction($num) . '.pdf';
                 break; 
             case "import":
                 $disk = "import";
@@ -35,4 +35,14 @@ class DownloadController extends Controller
         }
         return Storage::disk($disk)->download($filePath, $name);
     }
+
+    private static function correction($num)
+    {
+        // Письмо № 1825-06 от 10.01.2025 о поверке, прибор UA-888AC (серийные номера SNA231230001-SNA231232000)
+        // Письмо №167-01 от 20.01.2025_UA-604_5241200001-5241203000
+        $search = ['№ ', ' о поверке, прибор ', ' (серийные номера ', ')'];
+        $replace = ['№', '_', '_', ''];
+        return str_replace($search, $replace, $num);
+    }
+    
 }

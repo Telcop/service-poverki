@@ -175,7 +175,7 @@ class VarificationRequestTable extends Table
                                 ->icon('bs.arrow-right-circle'),
                             Link::make(__('Upload the application'))
                                 // ->href('/download/requests/' . $working->request->number . '/' . $working->request->url_request)
-                                ->href(env('PATH_FTP') . env('FTP_ROOT_REQUESTS') . DIRECTORY_SEPARATOR . $working->request->url_request)
+                                ->href(config('custom.path_ftp') . config('custom.ftp_root_requests') . DIRECTORY_SEPARATOR . $working->request->url_request)
                                 ->icon('bs.filetype-xls')
                                 ->target('_blank'),
                             Button::make(__('Return the request'))

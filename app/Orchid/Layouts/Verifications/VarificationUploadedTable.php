@@ -205,7 +205,7 @@ class VarificationUploadedTable extends Table
                         ->icon('bs.three-dots-vertical')
                         ->list([
                             Link::make(__('Open the verification letter'))
-                                ->href(env('PATH_FTP') . env('FTP_ROOT_POVERKI') . DIRECTORY_SEPARATOR . $working->url_poverki)
+                                ->href(config('custom.path_ftp') . config('custom.ftp_root_poverki') . DIRECTORY_SEPARATOR . $working->url_poverki)
                                 ->icon('bs.file-earmark-pdf')
                                 ->target('_blank'),
                             Link::make(__('Upload the verification letter'))
