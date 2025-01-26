@@ -25,6 +25,7 @@ use App\Orchid\Selections\SutOperatorSelection;
 use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\TD;
+use App\Models\Logging;
 use Illuminate\Support\Facades\Auth;
 
 class SutScreen extends Screen
@@ -152,6 +153,9 @@ class SutScreen extends Screen
         } else {
             Toast::warning("Не корректные данные");
         }
+        Logging::setAction(Auth::user()->name, Logging::ACTION_CREATE_SUT, [
+            'id' => $item->id
+        ]);
     }
 
     // Асинхонный метод Редактирование записи
@@ -175,9 +179,15 @@ class SutScreen extends Screen
             DB::transaction(function () use ($request) {
                 Sut::find($request->input('item.id'))->update($request->item);
                 Toast::info("Модель c id = " . $request->input('item.id') . " обновлена");
+                Logging::setAction(Auth::user()->name, Logging::ACTION_UPDATE_SUT, [
+                    'id' => $request->input('item.id')
+                ]);
             });
     } catch (Exception $e) { 
             Toast::warning("Модель c id = " . $request->input('item.id') . " не обновлена");
+            Logging::setAction(Auth::user()->name, Logging::ACTION_UPDATE_SUT, [
+                'Error update ' . $request->input('item.id')
+            ]);
         }
     }
 
@@ -186,6 +196,9 @@ class SutScreen extends Screen
     {
         Sut::destroy($id);
         Toast::warning("Запись c id = " . $id . " удалена");
+        Logging::setAction(Auth::user()->name, Logging::ACTION_DELETE_SUT, [
+            'id' => $id
+        ]);
     }
 
     // Обработка Восстановление удаленной записи
