@@ -22,13 +22,15 @@ class LoginListener
     public function handleLogin(Login $event)
     {
         Logging::setAction($event->user->name, Logging::ACTION_IN, [
-            'ipAddr' => request()->ip(),
-            'macAddr' => exec('getmac')
+            'ipAddr' => request()->ip()
         ]);
     }
 
     public function handleLogout(Logout $event)
     {
-        Logging::setAction($event->user->name, Logging::ACTION_OUT);
+        Logging::setAction($event->user->name, Logging::ACTION_OUT, [
+            'ipAddr' => request()->ip()
+        ]);
     }
+
 }

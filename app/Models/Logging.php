@@ -35,11 +35,16 @@ class Logging extends Model
         return ((new self)->getTale());
     }
 
-    public static function setAction(string $user, string $action, Array $message = null)
+    public static function setAction(string $user, string $action, $message = null)
     {
         $res = new Logging;
         $res->user = $user;
-        $message_str = !empty($message) ? self::arrayToString($message) : "";
+        $message_str = "";
+        if (!empty($message))
+            if (is_array($message))
+                $message_str = self::arrayToString($message);
+            else
+                $message_str = $message; 
         $res->action = 'Action: ' . $action . $message_str;
         $res->save();
         return $res;
