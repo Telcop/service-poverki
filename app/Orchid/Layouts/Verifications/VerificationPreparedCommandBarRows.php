@@ -38,16 +38,23 @@ class VerificationPreparedCommandBarRows extends Rows
                         // ->disabled(true)
                         ->canSee(Auth::user()->hasAccess('platform.admin.logging')),
 
-                    CheckBox::make('selectAll')
-                        ->value(0)
-                        ->placeholder('Выделить все')
+                    Button::make('Удаление')
+                        ->method('deleteGroup')
+                        ->class('btn icon-link btn-secondary rounded')
+                        ->icon('bs.trash3-fill')
                         ->align(TD::ALIGN_RIGHT)
-                        ->id('select-all'),
+                        ->disabled($this->query->has('disable_entering'))
+                        ->id('button-del')
+                        ->confirm('Вы действительно хотите удалить выделенные запииси?'),
+                    // CheckBox::make('selectAll')
+                    //     ->value(0)
+                    //     ->placeholder('Выделить все')
+                    //     ->align(TD::ALIGN_RIGHT)
+                    //     ->id('select-all'),
 
                     DateTimer::make('dateRequest')
                         ->title('Дата заявки:')
                         ->format('d.m.Y')
-                        ->required()
                         ->allowInput()
                         ->allowEmpty()
                         ->noTime()

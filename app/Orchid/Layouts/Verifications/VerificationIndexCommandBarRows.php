@@ -54,16 +54,23 @@ class VerificationIndexCommandBarRows extends Rows
                         // ->disabled(true)
                         ->canSee(Auth::user()->hasAccess('platform.admin.logging')),
 
-                    CheckBox::make('selectAll')
-                        ->value(0)
-                        ->placeholder('Выделить все')
+                    Button::make('Удаление')
+                        ->method('deleteGroup')
+                        ->class('btn icon-link btn-secondary rounded')
+                        ->icon('bs.trash3-fill')
                         ->align(TD::ALIGN_RIGHT)
-                        ->id('select-all'),
+                        ->disabled($this->query->has('disable_entering'))
+                        ->id('button-del')
+                        ->confirm('Вы действительно хотите удалить выделенные записи?'),
+                    // CheckBox::make('selectAll')
+                    //     ->value(0)
+                    //     ->placeholder('Выделить все')
+                    //     ->align(TD::ALIGN_RIGHT)
+                    //     ->id('select-all'),
 
                     DateTimer::make('dateEntering')
                         ->title('Дата ввоза в РФ:')
                         ->format('d.m.Y')
-                        ->required()
                         ->allowInput()
                         ->allowEmpty()
                         ->noTime()
@@ -78,6 +85,7 @@ class VerificationIndexCommandBarRows extends Rows
                         ->align(TD::ALIGN_LEFT)
                         ->disabled($this->query->has('disable_entering'))
                         ->id('date-button')
+
             ])
             ->widthColumns('16% 15% 16% 10% 17% 17%')
             ->alignEnd(),

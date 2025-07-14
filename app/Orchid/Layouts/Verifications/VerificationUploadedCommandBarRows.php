@@ -29,11 +29,11 @@ class VerificationUploadedCommandBarRows extends Rows
     {
         return [
             Group::make([
-                    CheckBox::make('selectAll')
-                        ->value(0)
-                        ->placeholder('Выделить все')
-                        ->align(TD::ALIGN_RIGHT)
-                        ->id('select-all'),
+                    // CheckBox::make('selectAll')
+                    //     ->value(0)
+                    //     ->placeholder('Выделить все')
+                    //     ->align(TD::ALIGN_RIGHT)
+                    //     ->id('select-all'),
 
                     Button::make(__('Deactivate verifications'))
                         ->method('deactivateVerifications')
@@ -49,7 +49,7 @@ class VerificationUploadedCommandBarRows extends Rows
                         ->class('btn icon-link btn-secondary rounded')
                         ->canSee(Auth::user()->hasAccess('platform.admin.logging')),
             ])
-            ->widthColumns('10% 19% 13%')
+            ->widthColumns('19% 13%')
             ->alignEnd(),
         ];
     }

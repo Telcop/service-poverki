@@ -13,6 +13,7 @@ class Logging extends Model
     const ACTION_UPDATE_INVOICE_1 = "Редактирование инвойса на этапе внесения доставок";
     const ACTION_UPDATE_INVOICE_2 = "Редактирование инвойса на этапе подготовки заявок";
     const ACTION_DELETE_INVOICE = "Удаление инвойса";
+    const ACTION_DELETE_INVOICES = "Удаление инвойсов";
     const ACTION_NEXT_STATUS = "Переход на следующий этап";
     const ACTION_PREV_STATUS = "Возврат к предыдущему этапу";
     const ACTION_UPDATE_POVERKI = "Редактирование поверки";

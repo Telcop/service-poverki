@@ -123,7 +123,7 @@ class VerificationIndexScreen extends Screen
             ]))
                 ->title('Введите id записи для восстановления')
                 ->size(Modal::SIZE_SM),
-            
+
             // Модальное окно Экспорт инвойсов из таблицы Excel
             Layout::modal('ImportInvoicesModal', ImportInvoicesIndexModalRows::class)
                 ->title('Импорт инвойсов из таблицы xls')
@@ -180,6 +180,17 @@ class VerificationIndexScreen extends Screen
                 'Error update ' . $request->input('item.id')
             ]);
         }
+    }
+
+    // Групповое удаление 
+    public function deleteGroup(Request $request)
+    {   
+        $ids = $request->input('working');
+        Working::destroy($ids);
+        Toast::warning("Записи c id " .  implode(', ', $ids) . " удалены");
+        Logging::setAction(Auth::user()->name, Logging::ACTION_DELETE_INVOICES, [
+            'id' => $ids
+        ]);
     }
 
     // Обработка Удаление записи

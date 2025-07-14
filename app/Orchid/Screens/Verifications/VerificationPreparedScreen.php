@@ -184,6 +184,17 @@ class VerificationPreparedScreen extends Screen
         }
    }
 
+    // Групповое удаление 
+    public function deleteGroup(Request $request)
+    {   
+        $ids = $request->input('working');
+        Working::destroy($ids);
+        Toast::warning("Записи c id " .  implode(', ', $ids) . " удалены");
+        Logging::setAction(Auth::user()->name, Logging::ACTION_DELETE_INVOICES, [
+            'id' => $ids
+        ]);
+    }
+
     // Обработка Удаление записи
     public function deleteItem($id)
     {
