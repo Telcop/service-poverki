@@ -46,7 +46,7 @@ class VerificationPreparedScreen extends Screen
      */
     public function query(Dashboard $dashboard): iterable //
     {
-        $dashboard->registerResource('scripts', '/js/custom.js');
+        $dashboard->registerResource('scripts', '/js/custom1.js');
         $this->tab = Status::orderBy('weight', 'asc')->offset(self::TAB_NUMBER - 1)->limit(1)->get()->first();
         $this->table = Working::where('status_id', $this->tab->id)->with('vendor')->with('sut')
             ->filtersApplySelection(VerificationPreparedOperatorSelection::class)
