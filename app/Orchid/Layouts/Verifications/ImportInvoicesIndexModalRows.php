@@ -32,6 +32,7 @@ class ImportInvoicesIndexModalRows extends Rows
                 ->title('Загрузить файл xls')
                 ->storage('import')
                 ->accept('.xls, .xlsx')
+                ->required()
                 ->maxSize(5)
                 ->help('Загрузите файл с расширением xls/xlsx для импорта инвойсов.'),
 
